@@ -1,0 +1,41 @@
+version: '3.0'
+
+services:
+  server:
+    build:
+      context: .
+    container_name: ${COMPOSE_PROJECT_NAME}.server
+    networks:
+      - local
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      - data-service  
+    volumes:
+      - .:/home/node/${COMPOSE_PROJECT_NAME}/server
+    working_dir: /home/node/${COMPOSE_PROJECT_NAME}/server
+    user: node
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - SERVER_PORT=${SERVER_PORT}
+    command: |
+      /bin/bash -exc "
+        npm install &&
+        npm run build &&
+        npm run start:debug"
+
+
+  data-service:
+    image: garryturk/mock-product-data 
+    container_name: ${COMPOSE_PROJECT_NAME}.data-service
+    networks:
+      - local
+    ports:
+      - "4001:4001"  
+
+volumes:
+  database:
+    name: product-db
+
+networks:
+  local:

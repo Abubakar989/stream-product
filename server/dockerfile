@@ -1,0 +1,22 @@
+FROM node:20-alpine AS build
+RUN apk --no-cache add bash
+RUN mkdir -p /build
+ADD package*.json /build/  
+WORKDIR /build
+RUN npm ci
+ADD . /build/  
+RUN npm run build
+
+FROM node:20-alpine AS final
+RUN apk --no-cache add bash gzip brotli
+RUN mkdir -p /application/server
+RUN mkdir -p /application/server/data
+WORKDIR /application/server
+ENV PORT=19000
+
+# Server folder
+COPY --from=build /build/dist /application/server/src
+COPY --from=build /build/package.json /application/server/
+COPY --from=build /build/node_modules /application/server/node_modules
+
+CMD ["node", "/application/server/src/main.js"]
