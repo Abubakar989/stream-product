@@ -1,8 +1,7 @@
 This service manages product data by fetching it from an external API and provides REST endpoints to interact with the product data. It runs using Docker Compose, which starts both the backend server and a mock product data container.
 
-Clone the repository:
+Clone the repository and go to server folder
 
-git clone https://github.com/your-username/stream-product.git
 cd stream-product/server
 
 Set up environment variables:
